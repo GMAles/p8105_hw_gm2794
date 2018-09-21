@@ -1,0 +1,111 @@
+---
+title: "p8105_hw1_gm2794"
+author: "GMA"
+date: "21 de septiembre de 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Problem 1
+
+This problem focuses on variable types and coercion.
+
+Create a data frame comprised of:
+
+A random sample of size 10 from a uniform[0, 5] distribution
+A logical vector indicating whether elements of the sample are greater than 2
+A (length-10) character vector
+A (length-10) factor vector
+```{r}
+library(tidyverse)
+dataframe1 = tibble( 
+  sample = runif(10, min=0, max=5),
+  logic = sample > 2,
+  charac = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "j"),
+  fact = factor(c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"))
+  )
+```
+Try to take the mean of each variable in your dataframe. What works and what doesn’t? Why? 
+```{r}
+mean (dataframe1$sample)
+mean (dataframe1$logic)
+mean (dataframe1$charac)
+mean (dataframe1$fact)
+#The two last variables do not yield mean as they are not numeric
+```
+In some cases, you can explicitly convert variables from one type to another. Write a code chunk that applies the as.numeric function to the logical, character, and factor variables (please show this chunk but not the output). What happens? 
+
+```{r}
+as.numeric(dataframe1$logic)
+as.numeric(dataframe1$charac)
+as.numeric(dataframe1$fact)
+#The character variable does not convert into numeric
+```
+
+In a second code chunk, convert your character variable from character to factor to numeric; similarly, convert your factor variable from factor to character to numeric. What happens?
+
+```{r}
+as.numeric(as.factor(dataframe1$charac))
+as.numeric(as.character(dataframe1$fact))
+
+```
+
+Problem 2
+
+This problem focuses on plotting and the use of inline R code.
+
+Create a data frame comprised of:
+x: a random sample of size 1000 from a standard Normal distribution
+y: a random sample of size 1000 from a standard Normal distribution
+A logical vector indicating whether the x + y > 0
+A numeric vector created by coercing the above logical vector
+A factor vector created by coercing the above logical vector
+
+```{r}
+library(tidyverse)
+dataframe2 = tibble(
+  x = rnorm (1000),
+  y = rnorm (1000),
+  xy0 = x + y > 0,
+  xy0numericvector = as.numeric(xy0),
+  xy0factorvector = as.factor(xy0numericvector)
+)
+```
+
+Write a short description of your vector using inline R code, including: * the size of the dataset 
+* the mean and median of x 
+* the proportion of cases for which the logical vector is TRUE
+
+```{r}
+dim(dataframe2)
+# includes mean and median
+summary(dataframe2)
+```
+Make a scatterplot of y vs x; color points using the logical variable (adding color = ... inside of aes in your ggplot code should help). 
+```{r}
+ggplot(dataframe2, aes(x = x, y = y, color = xy0)) +
+  geom_point()
+```
+
+Make a second and third scatterplot that color points using the numeric and factor variables, respectively, and comment on the color scales.
+
+```{r}
+ggplot(dataframe2, aes(x = x, y = y, color = xy0numericvector)) +
+  geom_point()
+# this graph uses a range of colours
+```
+```{r}
+ggplot(dataframe2, aes(x = x, y = y, color = xy0factorvector)) +
+  geom_point()
+# this graph only has two options as in my first one
+```
+Export your first scatterplot to your project directory using ggsave.
+```{r}
+ggplot(dataframe2, aes(x = x, y = y, color = xy0)) +
+  geom_point()
+
+ggsave("dataframe2_plot.pdf")
+```
+
